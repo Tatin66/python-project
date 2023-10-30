@@ -1,0 +1,7 @@
+CREATE TABLE films_style (
+    id INT PRIMARY KEY,
+    films_style_films_id INT,
+    films_style_style_id INT,
+    FOREIGN KEY (films_style_films_id) REFERENCES Films(id),
+    FOREIGN KEY (films_style_style_id) REFERENCES Style(id)
+);

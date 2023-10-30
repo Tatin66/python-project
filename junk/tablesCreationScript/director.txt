@@ -1,0 +1,7 @@
+CREATE TABLE director (
+    id INT PRIMARY KEY,
+    director_first_name VARCHAR(255),
+    director_last_name VARCHAR(255),
+    director_is_awarded BOOLEAN,
+    director_birth_date DATE
+);

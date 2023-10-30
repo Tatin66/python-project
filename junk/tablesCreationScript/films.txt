@@ -1,0 +1,10 @@
+CREATE TABLE films (
+    id INT PRIMARY KEY,
+    films_title VARCHAR(255),
+    films_plot VARCHAR(255),
+    films_release_year INT,
+    films_release_date DATE,
+    films_rating INT,
+    films_image_url VARCHAR(255),
+    films_running_time INT
+);
