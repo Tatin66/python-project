@@ -1,5 +1,0 @@
-CREATE TABLE style (
-    id INT PRIMARY KEY,
-    style_name VARCHAR(255),
-    style_description VARCHAR(255)
-);

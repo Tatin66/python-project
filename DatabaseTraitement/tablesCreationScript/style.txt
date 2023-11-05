@@ -1,0 +1,5 @@
+CREATE TABLE style (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    style_name VARCHAR(255) DEFAULT NULL,
+    style_description VARCHAR(255) DEFAULT NULL
+);

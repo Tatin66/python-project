@@ -2,7 +2,6 @@ import array
 import json
 import os
 import sqlite3
-from modules import dbConnector
 
 
 def dbConnect(self):
@@ -36,9 +35,8 @@ def fetchData() -> array:
 
 def dbCreation():
     dirContent = os.listdir('tablesCreationScript')
-    db, dbCursor = dbConnect()
-    #db = sqlite3.connect("../moviesDatabase.db")
-    #dbCursor = db.cursor()
+    db = sqlite3.connect("../moviesDatabase.db")
+    dbCursor = db.cursor()
     for file in dirContent:
         scriptFile = open('tablesCreationScript/'+file)
         scriptContent = scriptFile.read()
@@ -55,7 +53,8 @@ def dbCreation():
 
 def dataInjection(dataSet):
     for movie in dataSet: #pour chaque film
-        db, dbCursor = dbConnect()
+        db = sqlite3.connect("../moviesDatabase.db")
+        dbCursor = db.cursor()
         #ajouter la table film
         movie["title"] = "null" if movie["title"] == None else movie["title"].replace("'", "''")
         movie["plot"] = "null" if movie["plot"] == None else movie["plot"].replace("'", "''")
@@ -87,7 +86,8 @@ def dataInjection(dataSet):
             except:
                 logFile = open('log.txt', 'a')
                 logFile.write("Error in : " + sqlStr + "\n")
-            db, dbCursor = dbConnect()
+            db = sqlite3.connect("../moviesDatabase.db")
+            dbCursor = db.cursor()
             sqlStr = "SELECT id FROM director WHERE director_first_name == '" + firstName + "';"
             sqlReturn = dbCursor.execute(sqlStr)
             res = dbCursor.fetchone()
@@ -107,7 +107,8 @@ def dataInjection(dataSet):
             else:
                 nextIdDirector = res[0]
             #ajouter le lien dans la table film_directeurs
-            db, dbCursor = dbConnect()
+            db = sqlite3.connect("../moviesDatabase.db")
+            dbCursor = db.cursor()
             nextIdFilmsDirector = dbCursor.execute("SELECT COUNT(*) FROM films_director;").fetchone()[0]
             sqlStr = "INSERT INTO films_director VALUES ("
             sqlStr += str(nextIdFilmsDirector) + ", " + str(movie["id"]) + ", " + str(nextIdDirector)
@@ -122,7 +123,8 @@ def dataInjection(dataSet):
         #pour chaque style
         for style in movie["style"]:
             style = style.replace(" ", "")
-            db, dbCursor = dbConnect()
+            db = sqlite3.connect("../moviesDatabase.db")
+            dbCursor = db.cursor()
             sqlStr = "SELECT id FROM style WHERE style_name = '" + style + "';"
             sqlReturn = dbCursor.execute(sqlStr)
             res = dbCursor.fetchone()
@@ -143,7 +145,8 @@ def dataInjection(dataSet):
                 nextIdStyle = res[0]
 
             #ajouter le lien dans la table film_style
-            db, dbCursor = dbConnect()
+            db = sqlite3.connect("../moviesDatabase.db")
+            dbCursor = db.cursor()
             nextIdFilmsStyle = dbCursor.execute("SELECT COUNT(*) FROM films_style;").fetchone()[0]
             sqlStr = "INSERT INTO films_style VALUES ("
             sqlStr += str(nextIdFilmsStyle) + ", " + str(movie["id"]) + ", " + str(nextIdStyle)
@@ -157,4 +160,4 @@ def dataInjection(dataSet):
             db.close()
 
 dbCreation()
-dataInjection(fetchData())
+#dataInjection(fetchData())

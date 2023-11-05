@@ -1,0 +1,7 @@
+CREATE TABLE director (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    director_first_name VARCHAR(255) DEFAULT NULL,
+    director_last_name VARCHAR(255) DEFAULT NULL,
+    director_is_awarded BOOLEAN DEFAULT NULL,
+    director_birth_date DATE DEFAULT NULL
+);

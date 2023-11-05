@@ -1,0 +1,10 @@
+CREATE TABLE films (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    films_title VARCHAR(255) DEFAULT NULL,
+    films_plot VARCHAR(255) DEFAULT NULL,
+    films_release_year INT DEFAULT NULL,
+    films_release_date DATE DEFAULT NULL,
+    films_rating INT DEFAULT NULL,
+    films_image_url VARCHAR(255) DEFAULT NULL,
+    films_running_time INT DEFAULT NULL
+);
