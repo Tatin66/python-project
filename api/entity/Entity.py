@@ -62,3 +62,21 @@ class Entity():
             valuesSqlStr += f"'{value}'," if type(value) is str else f"{value}," if value != None else "null,"
         sqlStr = f"INSERT INTO {self.dbTableName} ({collumnSqlStr[:-1]}) VALUES ({valuesSqlStr[:-1]})"
         return "Ok", 200
+
+    def modify(self, inputItem):
+        #supprimer l'entité
+        self.delete(inputItem.id)
+        #ajouter l'entité
+        self.add(inputItem)
+        return "Ok", 200
+
+    def delete(self, id):
+        sqlStr = f"DELETE FROM {self.dbTableName} where id = {id}"
+        resSql = self.dbCursor.execute(sqlStr)
+        return "Ok", 200
+
+    def strToObj(self, data):
+        newObj = {}
+        for key, value in data:
+            newObj[key] = value
+        return newObj

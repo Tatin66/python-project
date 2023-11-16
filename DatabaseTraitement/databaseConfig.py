@@ -160,4 +160,4 @@ def dataInjection(dataSet):
             db.close()
 
 dbCreation()
-#dataInjection(fetchData())
+dataInjection(fetchData())

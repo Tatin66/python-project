@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from entity.FIlms import Films, FilmModel
 from entity.Director import Director, DirectorModel
-from entity.Style import Style
+from entity.Style import Style, StyleModel
 
 app = FastAPI()
 
@@ -42,17 +42,41 @@ def read_item(directorData: DirectorModel):
     return {"Status": responseStatus, "Response": response}
 
 @app.put("/api/films") #Modification du film
-def read_item():
-    return {"Status": "responseStatus", "Response": "response"}
+def read_item(filmData: FilmModel):
+    filmClass = Films()
+    response, responseStatus = filmClass.modify(filmData)
+    return {"Status": responseStatus, "Response": response}
 
 @app.put("/api/directeurs") #Modification du directeur précisé par :id
-def read_item():
-    return {"Status": "responseStatus", "Response": "response"}
+def read_item(directorData: DirectorModel):
+    directorClass = Director()
+    response, responseStatus = directorClass.modify(directorData)
+    return {"Status": responseStatus, "Response": response}
 
 @app.put("/api/style") #Modification du genre précisé par :id
-def read_item():
-    return {"Status": "responseStatus", "Response": "response"}
+def read_item(directorStyle: StyleModel):
+    styleClass = Style()
+    response, responseStatus = styleClass.modify(directorStyle)
+    return {"Status": responseStatus, "Response": response}
 
 @app.delete("/api/films/{id}") #Suppression du film précisé par :id
-def read_item():
-    return {"Status": "responseStatus", "Response": "response"}
+def read_item(id: int):
+    filmClass = Films()
+    response, responseStatus = filmClass.delete(id)
+    return {"Status": response, "Response": responseStatus}
+
+@app.api_route("/{path_name:path}", methods=["GET"])
+def catch_all():
+    return {"Status": "Bad Url", "Response" : 400}
+
+@app.api_route("/{path_name:path}", methods=["POST"])
+def catch_all():
+    return {"Status": "Bad Url", "Response" : 400}
+
+@app.api_route("/{path_name:path}", methods=["PUT"])
+def catch_all():
+    return {"Status": "Bad Url", "Response" : 400}
+
+@app.api_route("/{path_name:path}", methods=["DELETE"])
+def catch_all():
+    return {"Status": "Bad Url", "Response" : 400}

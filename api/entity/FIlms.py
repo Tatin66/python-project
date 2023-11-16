@@ -165,6 +165,34 @@ class Films(Entity):
                 self.db.commit()
         return "ok", 200
 
+    def delete(self, id):
+        #récupération des id lié a ce film dans films_styles
+        sqlStr = f"SELECT id FROM films_style WHERE films_style_films_id = {id}"
+        self.dbCursor.execute(sqlStr)
+        stylesIds = self.dbCursor.fetchall()
+        self.db.commit()
+        #récupération des id lié a ce film dans les films_director
+        sqlStr = f"SELECT id FROM films_director WHERE films_director_films_id = {id}"
+        self.dbCursor.execute(sqlStr)
+        directorsIds = self.dbCursor.fetchall()
+        self.db.commit()
+        #supprimer ces id
+        for directorId in directorsIds:
+            sqlStr = f"DELETE FROM films_director where id = {directorId[0]}"
+            self.dbCursor.execute(sqlStr)
+            self.db.commit()
+
+        for styleId in stylesIds:
+            sqlStr = f"DELETE FROM films_style where id = {styleId[0]}"
+            self.dbCursor.execute(sqlStr)
+            self.db.commit()
+
+        #supprimer le film
+        sqlStr = f"DELETE FROM films where id = {id}"
+        self.dbCursor.execute(sqlStr)
+        self.db.commit()
+        return "Ok", 200
+
     def createItemSqlStr(self, item, dbTableName):
         collumnSqlStr = ""
         valuesSqlStr = ""
