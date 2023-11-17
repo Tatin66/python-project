@@ -88,3 +88,21 @@ class Entity():
         for key, value in data:
             newObj[key] = value
         return newObj
+
+    def createItemSqlStr(self, item, dbTableName):
+        collumnSqlStr = ""
+        valuesSqlStr = ""
+        for key, value in item.items():
+            collumnSqlStr += f"'{key}',"
+            valuesSqlStr += f"'{value}'," if type(value) is str else f"{value}," if value != None else "null,"
+        return f"INSERT INTO {dbTableName} ({collumnSqlStr[:-1]}) VALUES ({valuesSqlStr[:-1]})"
+
+
+    def itemExist(self, id, dbTableName):
+        if id is not None:
+            sqlStr = f"SELECT id FROM {dbTableName} WHERE id = {id}"
+            resSql = self.dbCursor.execute(sqlStr)
+            res = resSql.fetchone()
+        else:
+            res = None
+        return res

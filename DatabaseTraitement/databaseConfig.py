@@ -2,7 +2,7 @@ import array
 import json
 import os
 import sqlite3
-
+from infoUpdate import run
 
 def dbConnect(self):
     db = sqlite3.connect("../moviesDatabase.db")
@@ -64,7 +64,7 @@ def dataInjection(dataSet):
         movie["rating"] = "null" if movie["rating"] == None else movie["rating"]
 
         sqlStr = "INSERT INTO films VALUES ("
-        sqlStr += str(movie["id"]) + ", '" + movie["title"] + "', '" + movie["plot"] + "'," + str(movie["year"]) + "," + movie["date"] + "," + str(movie["rating"]) + ", '" + movie["image"] + "'," + str(movie["time"])
+        sqlStr += str(movie["id"]) + ", '" + movie["title"] + "', '" + movie["plot"] + "'," + str(movie["year"]) + "," + str(movie["date"]) + "," + str(movie["rating"]) + ", '" + movie["image"] + "'," + str(movie["time"])
         sqlStr += ");"
         try:
             dbCursor.execute(sqlStr)
@@ -161,3 +161,4 @@ def dataInjection(dataSet):
 
 dbCreation()
 dataInjection(fetchData())
+run()
