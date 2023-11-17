@@ -67,7 +67,6 @@ class Entity():
                 valuesSqlStr += f"'{value}'," if type(value) is str else f"{value}," if value != None else "null,"
         sqlStr = f"INSERT INTO {self.dbTableName} ({collumnSqlStr[:-1]}) VALUES ({valuesSqlStr[:-1]})"
         resSql = self.dbCursor.execute(sqlStr)
-        print(sqlStr)
         return "Ok"
 
     def modify(self, inputItem):
