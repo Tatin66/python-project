@@ -10,7 +10,7 @@ class Entity():
         self.dbCursor = self.db.cursor()
 
     def getAll(self):
-        sqlStr = f"SELECT * FROM {self.dbTableName};"
+        sqlStr = f"SELECT * FROM {self.dbTableName}"
         res = self.dbCursor.execute(sqlStr)
         if res != None:
             self.dbCursor.execute(sqlStr)
@@ -35,6 +35,8 @@ class Entity():
             self.dbCursor.execute(sqlStr)
             resData = self.dbCursor.fetchall()
             listData = []
+            if (len(resData) == 0):
+                return f"Error : Id didn't exist on the table '{self.dbTableName}'", 400
             for item in resData:
                 i = 0
                 itemData = {}
@@ -49,10 +51,11 @@ class Entity():
             return "Err: No data to fetch", 100
 
     def add(self, inputItem):
-        sqlStr = f"SELECT id FROM {self.dbTableName} WHERE id = {inputItem.id}"
-        resSql = self.dbCursor.execute(sqlStr)
-        res = resSql.fetchone()
-        print(res)
+        res = None
+        if inputItem.id is not None:
+            sqlStr = f"SELECT id FROM {self.dbTableName} WHERE id = {inputItem.id}"
+            resSql = self.dbCursor.execute(sqlStr)
+            res = resSql.fetchone()
         if res != None:
             return f"Err: one item already exist with this Id : {inputItem.id}", 200
         collumnSqlStr = ""
@@ -61,13 +64,18 @@ class Entity():
             collumnSqlStr += f"'{key}',"
             valuesSqlStr += f"'{value}'," if type(value) is str else f"{value}," if value != None else "null,"
         sqlStr = f"INSERT INTO {self.dbTableName} ({collumnSqlStr[:-1]}) VALUES ({valuesSqlStr[:-1]})"
+        resSql = self.dbCursor.execute(sqlStr)
         return "Ok", 200
 
     def modify(self, inputItem):
+        if inputItem.id is None:
+            return "Error: no Id given", 400
         #supprimer l'entité
         self.delete(inputItem.id)
+        self.db.commit()
         #ajouter l'entité
         self.add(inputItem)
+        self.db.commit()
         return "Ok", 200
 
     def delete(self, id):

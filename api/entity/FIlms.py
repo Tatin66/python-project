@@ -94,6 +94,8 @@ class Films(Entity):
         listData = []
 
         for movie in movies:
+            if (movie[0] == None):
+                return f"Error : Id didn't exist on the table '{self.dbTableName}'", 400
             directorsList = []
             styleList = []
             if movie[8] != None:
@@ -134,13 +136,13 @@ class Films(Entity):
         #retirer l'id
         filmData.pop('id')
         #est ce que l'item existe
-        if self.itemExist(filmId, self.dbTableName) is not None:
-            #oui : erreur
-            return f"Err : ItemId : {filmId} exist in database", 201
-            #non :
-                #créer l'item
+        if filmId is not None:
+            if self.itemExist(filmId, self.dbTableName) is not None:
+                return f"Err : ItemId : {filmId} exist in database", 201
         self.dbCursor.execute(self.createItemSqlStr(filmData, self.dbTableName))
         self.db.commit()
+        #récupérer l'id de l'objet
+        filmId = self.dbCursor.lastrowid
         #est ce qu'il a des directeurs ou des styles associé
         if filmStyle != None:
             for style in filmStyle:
@@ -151,6 +153,8 @@ class Films(Entity):
                     #non : Créer le style ou le directeur
                     self.dbCursor.execute(self.createItemSqlStr(style, 'style'))
                     self.db.commit()
+                    #récupérer l'id du style insérer
+                    styleId = self.dbCursor.lastrowid
                 #ajouter le lien entre le film et le style ou le directeur
                 self.dbCursor.execute(f"INSERT INTO films_style ('films_style_films_id', 'films_style_style_id') VALUES ({filmId}, {styleId})")
                 self.db.commit()
@@ -161,6 +165,8 @@ class Films(Entity):
                 if self.itemExist(directorId, 'director') is None:
                     self.dbCursor.execute(self.createItemSqlStr(director, 'director'))
                     self.db.commit()
+                    #récupérer l'id du directeur insérer
+                    directorId = self.dbCursor.lastrowid
                 self.dbCursor.execute(f"INSERT INTO films_director ('films_director_films_id', 'films_director_director_id') VALUES ({filmId}, {directorId})")
                 self.db.commit()
         return "ok", 200
@@ -203,9 +209,12 @@ class Films(Entity):
 
 
     def itemExist(self, id, dbTableName):
-        sqlStr = f"SELECT id FROM {dbTableName} WHERE id = {id}"
-        resSql = self.dbCursor.execute(sqlStr)
-        res = resSql.fetchone()
+        if id is not None:
+            sqlStr = f"SELECT id FROM {dbTableName} WHERE id = {id}"
+            resSql = self.dbCursor.execute(sqlStr)
+            res = resSql.fetchone()
+        else:
+            res = None
         return res
 
     def strToObj(self, data):
