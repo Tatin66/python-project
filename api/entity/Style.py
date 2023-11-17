@@ -22,7 +22,7 @@ class Style(Entity):
         sqlStr = f"DELETE FROM style where id = {id}"
         self.dbCursor.execute(sqlStr)
         self.db.commit()
-        return "Ok", 200
+        return "Ok"
 class StyleModel(BaseModel):
     id: int | None = None
     style_name: str | None = None

@@ -22,7 +22,7 @@ class Director(Entity):
         sqlStr = f"DELETE FROM director where id = {id}"
         self.dbCursor.execute(sqlStr)
         self.db.commit()
-        return "Ok", 200
+        return "Ok"
 
 
 class DirectorModel(BaseModel):

@@ -10,7 +10,7 @@ class Films(Entity):
         model = FilmModel()
         super().__init__("films", model)
 
-    def getAll(self):
+    def getAll(self): #récupération de la liste de film
         sqlStr = """
             SELECT
                 f.id AS film_id,
@@ -33,23 +33,26 @@ class Films(Entity):
         """
         self.dbCursor.execute(sqlStr)
         movies = self.dbCursor.fetchall()
+        self.db.commit()
         styleEntity = Style()
         directorEntity = Director()
         listData = []
 
+        #pour chaque films:
         for movie in movies:
             directorsList = []
             styleList = []
+            #récupération de la liste des directeurs associées
             if movie[8] != None:
                 directorIds = movie[8].split(",")
                 for directorId in directorIds:
-                    directorsList.append(directorEntity.getBy("id", directorId)[0])
-
+                    directorsList.append(directorEntity.getBy("id", directorId))
+            #récupération de la liste des styles associées
             if movie[9] != None:
                 styleIds = movie[9].split(",")
                 for styleId in styleIds:
-                    styleList.append(styleEntity.getBy("id", styleId)[0])
-
+                    styleList.append(styleEntity.getBy("id", styleId))
+            #création de l'objet item avec toutes les donées
             item = {
                 "id": movie[0],
                 "films_title": movie[1],
@@ -65,9 +68,9 @@ class Films(Entity):
 
             listData.append(item)
         json_data = json.loads(json.dumps(listData))
-        return json_data, 200
+        return json_data
 
-    def getBy(self, attName, attValue):
+    def getBy(self, attName, attValue): #récupération d'un film d'apres une valeur
         sqlStr = f"""
             SELECT
                 f.id AS film_id,
@@ -89,24 +92,25 @@ class Films(Entity):
         """
         self.dbCursor.execute(sqlStr)
         movies = self.dbCursor.fetchall()
+        self.db.commit()
         styleEntity = Style()
         directorEntity = Director()
         listData = []
 
         for movie in movies:
             if (movie[0] == None):
-                return f"Error : Id didn't exist on the table '{self.dbTableName}'", 400
+                return f"Error : Id didn't exist on the table '{self.dbTableName}'"
             directorsList = []
             styleList = []
             if movie[8] != None:
                 directorIds = movie[8].split(",")
                 for directorId in directorIds:
-                    directorsList.append(directorEntity.getBy("id", directorId)[0])
+                    directorsList.append(directorEntity.getBy("id", directorId))
 
             if movie[9] != None:
                 styleIds = movie[9].split(",")
                 for styleId in styleIds:
-                    styleList.append(styleEntity.getBy("id", styleId)[0])
+                    styleList.append(styleEntity.getBy("id", styleId))
 
             item = {
                 "id": movie[0],
@@ -123,7 +127,7 @@ class Films(Entity):
 
             listData.append(item)
         json_data = json.loads(json.dumps(listData))
-        return json_data, 200
+        return json_data
 
     def add(self, inputItem):
         #créer l'objet input item
@@ -138,7 +142,7 @@ class Films(Entity):
         #est ce que l'item existe
         if filmId is not None:
             if self.itemExist(filmId, self.dbTableName) is not None:
-                return f"Err : ItemId : {filmId} exist in database", 201
+                return f"Err : ItemId : {filmId} exist in database"
         self.dbCursor.execute(self.createItemSqlStr(filmData, self.dbTableName))
         self.db.commit()
         #récupérer l'id de l'objet
@@ -169,7 +173,7 @@ class Films(Entity):
                     directorId = self.dbCursor.lastrowid
                 self.dbCursor.execute(f"INSERT INTO films_director ('films_director_films_id', 'films_director_director_id') VALUES ({filmId}, {directorId})")
                 self.db.commit()
-        return "ok", 200
+        return "ok"
 
     def delete(self, id):
         #récupération des id lié a ce film dans films_styles
@@ -197,7 +201,7 @@ class Films(Entity):
         sqlStr = f"DELETE FROM films where id = {id}"
         self.dbCursor.execute(sqlStr)
         self.db.commit()
-        return "Ok", 200
+        return "Ok"
 
 
 class FilmModel(BaseModel):
